@@ -5,7 +5,7 @@ import re
 
 # Configuración
 API_KEY = os.environ["YOUTUBE_API_KEY"]
-CHANNEL_ID = "UCboXCsBUZvek5T5cCltHS5w" # Chillimica
+CHANNEL_ID = "UCboXCsBUZvek5T5cCltHS5w" # Chillimicaaaaa
 
 def parse_duration(duration_str):
     """Convierte la duración ISO 8601 (ej. PT1H2M10S) a segundos para filtrar Shorts"""
@@ -72,7 +72,7 @@ def buscar_video_real():
         }
         break # Ya encontramos el más reciente, dejamos de buscar
 
-    # Guardar resultado
+    # Guardar resultadoa
     if video_final:
         with open("video_data.json", "w") as f:
             json.dump(video_final, f)
