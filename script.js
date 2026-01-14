@@ -10,9 +10,7 @@ async function init() {
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
 
-        // 1. Update Avatar
         const avatarImg = document.getElementById('hero-avatar');
-        // Add error handler fallback
         if (avatarImg) {
             avatarImg.onerror = function () {
                 this.src = "https://yt3.googleusercontent.com/DYwV33MwJeellbSB0bqFYLlNjFI4ZUYAnbp780GLztlcNOterlv9vV5U67Ml920ko_dtUqpywA";
@@ -23,12 +21,9 @@ async function init() {
             if (avatarImg) avatarImg.src = data.feed.image;
         }
 
-        // 2. Render Videos
         const videoGrid = document.getElementById('video-grid');
         if (data.items && data.items.length > 0) {
-            videoGrid.innerHTML = ''; // Clear loading state
-
-            // Take up to 4 videos
+            videoGrid.innerHTML = '';
             const videosToShow = data.items.slice(0, 4);
 
             videosToShow.forEach(video => {
@@ -40,11 +35,9 @@ async function init() {
         }
 
     } catch (error) {
-        console.error("Error fetching data:", error);
         loadBackupContent();
     }
 
-    // Load Fan Arts
     loadFanArt();
 }
 
@@ -52,9 +45,8 @@ async function loadFanArt() {
     const galleryGrid = document.querySelector('.fan-art-grid');
     if (!galleryGrid) return;
 
-    // Use global fanArtData from fanart_data.js
     if (typeof fanArtData !== 'undefined') {
-        galleryGrid.innerHTML = ''; // Clear placeholders
+        galleryGrid.innerHTML = '';
 
         fanArtData.forEach(art => {
             const card = document.createElement('div');
@@ -68,13 +60,12 @@ async function loadFanArt() {
             galleryGrid.appendChild(card);
         });
     } else {
-        console.warn("No se encontraron fan arts (fanArtData undefined).");
         galleryGrid.innerHTML = '<p>No se pudo cargar la galería.</p>';
     }
 }
 
 function createVideoCard(video) {
-    const videoId = video.link ? video.link.split('v=')[1] : video.id; // Handle both RSS and JSON formats
+    const videoId = video.link ? video.link.split('v=')[1] : video.id;
     const title = video.title;
     const dateStr = new Date(video.pubDate || video.date).toLocaleDateString('es-ES', {
         year: 'numeric', month: 'long', day: 'numeric'
@@ -102,31 +93,24 @@ function createVideoCard(video) {
 }
 
 async function loadBackupContent() {
-    console.log("Intentando cargar desde video_data.json...");
     try {
         const response = await fetch('video_data.json');
         if (!response.ok) throw new Error("No se pudo cargar video_data.json");
 
         const localData = await response.json();
 
-        // 1. Update Avatar from local JSON
         if (localData.channel_avatar) {
             const avatarImg = document.getElementById('hero-avatar');
             if (avatarImg) avatarImg.src = localData.channel_avatar;
         }
 
-        // 2. Render Video from local JSON
         const videoGrid = document.getElementById('video-grid');
         videoGrid.innerHTML = '';
 
-        // Adapt format to match what createVideoCard expects
-        // video_data.json is a single object, createVideoCard can handle it with slight modification above
         const card = createVideoCard(localData);
         videoGrid.appendChild(card);
 
     } catch (e) {
-        console.warn("Fallo carga local, usando backup estático.", e);
-        // Fallback total
         const videoGrid = document.getElementById('video-grid');
         videoGrid.innerHTML = `
             <div class="video-card">
